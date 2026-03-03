@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,10 +16,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install pre-commit
+      - name: Install dependencies
         run: |
           pip install pre-commit
 
       - name: Run pre-commit
-        run: |
-          pre-commit run --all-files
+        run: pre-commit run --all-files
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
